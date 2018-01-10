@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package {{.ProtoDirName}};
+
+import "google/api/annotations.proto";
+
+// Interface exported by the server.
+service {{.GoServiceName}} {
+}
