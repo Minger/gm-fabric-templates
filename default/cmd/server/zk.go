@@ -14,10 +14,12 @@ func notifyZkOfMetricsIfNeeded(logger zerolog.Logger) []zkCancelFunc {
 		return nil
 	}
 
+	host, _ := checkAnnounceHost(viper.GetString("zk_announce_host"), logger)
+
 	logger.Info().Str("service", "{{.ServiceName}}").Msg("announcing metrics endpoint to zookeeper")
 	cancel := gk.Announce(viper.GetStringSlice("zk_connection_string"), &gk.Registration{
 		Path:   viper.GetString("zk_announce_path") + viper.GetString("metrics_uri_path"),
-		Host:   viper.GetString("zk_announce_host"),
+		Host:   host,
 		Status: gk.Alive,
 		Port:   viper.GetInt("metrics_server_port"),
 	})
@@ -31,10 +33,12 @@ func notifyZkOfRPCServerIfNeeded(logger zerolog.Logger) []zkCancelFunc {
 		return nil
 	}
 
+	host, _ := checkAnnounceHost(viper.GetString("zk_announce_host"), logger)
+
 	logger.Info().Str("service", "{{.ServiceName}}").Msg("announcing rpc endpoint to zookeeper")
 	cancel := gk.Announce(viper.GetStringSlice("zk_connection_string"), &gk.Registration{
 		Path:   viper.GetString("zk_announce_path") + "/rpc",
-		Host:   viper.GetString("zk_announce_host"),
+		Host:   host,
 		Status: gk.Alive,
 		Port:   viper.GetInt("grpc_server_port"),
 	})
@@ -48,6 +52,8 @@ func notifyZkOfGatewayEndpointIfNeeded(logger zerolog.Logger) []zkCancelFunc {
 		return nil
 	}
 
+	host, _ := checkAnnounceHost(viper.GetString("zk_announce_host"), logger)
+
 	gatewayEndpoint := "http"
 	if viper.GetBool("use_tls") {
 		gatewayEndpoint = "https"
@@ -57,11 +63,24 @@ func notifyZkOfGatewayEndpointIfNeeded(logger zerolog.Logger) []zkCancelFunc {
 
 	cancel := gk.Announce(viper.GetStringSlice("zk_connection_string"), &gk.Registration{
 		Path:   viper.GetString("zk_announce_path") + "/" + gatewayEndpoint,
-		Host:   viper.GetString("zk_announce_host"),
+		Host:   host,
 		Status: gk.Alive,
 		Port:   viper.GetInt("gateway_proxy_port"),
 	})
 	logger.Info().Str("service", "{{.ServiceName}}").Msg("announcing gateway endpoint to zookeeper")
 
 	return []zkCancelFunc{cancel}
+}
+
+func checkAnnounceHost(ah string, logger zerolog.Logger) (string, error) {
+	if ah == "" {
+		ip, err := gk.GetIP()
+		if err != nil {
+			logger.Error().AnErr("get_ip", err).Msg("Failed to get IP")
+			return "", err
+		}
+
+		return ip, nil
+	}
+	return ah, nil
 }
