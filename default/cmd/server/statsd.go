@@ -21,8 +21,8 @@ func getStatsdObserverIfNeeded(logger zerolog.Logger) ([]subject.Observer, error
 	statsdSink, err := gometrics.NewStatsiteSink(
 		fmt.Sprintf(
 			"%s:%d",
-			viper.GetString("statsd_server_host"),
-			viper.GetInt("statsd_server_port"),
+			viper.GetString("statsd_host"),
+			viper.GetInt("statsd_port"),
 		),
 	)
 	if err != nil {
@@ -35,8 +35,8 @@ func getStatsdObserverIfNeeded(logger zerolog.Logger) ([]subject.Observer, error
 	)
 
 	logger.Debug().Str("service", "{{.ServiceName}}").
-		Str("host", viper.GetString("statsd_server_host")).
-		Int("port", viper.GetInt("statsd_server_port")).
+		Str("host", viper.GetString("statsd_host")).
+		Int("port", viper.GetInt("statsd_port")).
 		Dur("interval", viper.GetDuration("statsd_mem_interval")).
 		Msg("reporting statsd")
 
