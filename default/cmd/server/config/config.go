@@ -32,8 +32,7 @@ func Initialize() error {
 	pflag.Parse()
 
 	if configFilePath != "" {
-		viper.SetConfigName(strings.Split(filepath.Base(configFilePath), ".")[0])
-		viper.AddConfigPath(filepath.Dir(configFilePath))
+		viper.SetConfigFile(configFilePath)
 	} else {
 		viper.SetConfigName("settings")
 		viper.AddConfigPath("/etc/{{.ServiceName}}/")
