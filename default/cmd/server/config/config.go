@@ -1,9 +1,6 @@
 package {{.ConfigPackageName}}
 
 import (
-	"path/filepath"
-	"strings"
-
 	"github.com/pkg/errors"
 
 	"github.com/spf13/pflag"
@@ -32,8 +29,7 @@ func Initialize() error {
 	pflag.Parse()
 
 	if configFilePath != "" {
-		viper.SetConfigName(strings.Split(filepath.Base(configFilePath), ".")[0])
-		viper.AddConfigPath(filepath.Dir(configFilePath))
+		viper.SetConfigFile(configFilePath)
 	} else {
 		viper.SetConfigName("settings")
 		viper.AddConfigPath("/etc/{{.ServiceName}}/")
