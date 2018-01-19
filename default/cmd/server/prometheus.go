@@ -8,7 +8,7 @@ import (
 	"github.com/armon/go-metrics/prometheus"
 
 	"github.com/deciphernow/gm-fabric-go/metrics/sinkobserver"
-	"github.com/decstatsdObserveriphernow/gm-fabric-go/metrics/subject"
+	"github.com/deciphernow/gm-fabric-go/metrics/subject"
 )
 
 func getPrometheusObserverIfNeeded(logger zerolog.Logger) ([]subject.Observer, error) {
