@@ -103,6 +103,12 @@ func main() {
 	}
 	observers = append(observers, statsdObserver...)
 	
+	prometheusObserver, err := getPrometheusObserverIfNeeded(logger)
+	if err != nil {
+		logger.Fatal().AnErr("getPrometheusObserverIfNeeded", err).Msg("")
+	}
+	observers = append(observers, prometheusObserver...)
+	
 	logger.Debug().Str("service", "{{.ServiceName}}").
 		Str("host", viper.GetString("metrics_server_host")).
 		Int("port", viper.GetInt("metrics_server_port")).
