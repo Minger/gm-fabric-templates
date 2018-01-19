@@ -12,7 +12,7 @@ import (
 )
 
 func getPrometheusObserverIfNeeded(logger zerolog.Logger) ([]subject.Observer, error) {
-	if !viper.GetBool("report_statsd") {
+	if !viper.GetBool("report_prometheus") {
 		return nil, nil
 	}
 
