@@ -69,7 +69,7 @@ func run() int {
 func newClient(
 	serverAddress string,
 	testCertDir string,
-) (pb.TestServiceClient, error) {
+) (pb.{{.GoServiceName}}Client, error) {
 
 	var opts []grpc.DialOption
 	var conn *grpc.ClientConn
@@ -99,5 +99,5 @@ func newClient(
 		return nil, errors.Wrapf(err, "grpc.Dial(%s", serverAddress)
 	}
 
-	return pb.NewTestServiceClient(conn), nil
+	return pb.New{{.GoServiceName}}Client(conn), nil
 }
