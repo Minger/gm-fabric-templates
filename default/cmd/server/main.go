@@ -117,9 +117,15 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.Handle(
-		viper.GetString("metrics_uri_path"), 
+		viper.GetString("metrics_dashboard_uri_path"), 
 		ms.NewDashboardHandler(grpcObserver.Report, goMetObserver.Report),
 	)
+	if viper.GetBool("report_prometheus") {
+		mux.Handle(
+			viper.GetString("metrics_prometheus_uri_path"), 
+			ms.NewPrometheusHandler(),
+		)
+	}
 	
 	mServer := ms.NewMetricsServer(
 		fmt.Sprintf(
