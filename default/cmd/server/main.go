@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"net"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -113,18 +114,27 @@ func main() {
 		Str("host", viper.GetString("metrics_server_host")).
 		Int("port", viper.GetInt("metrics_server_port")).
 		Msg("starting metrics server")
-	err = ms.Start(
+
+	mux := http.NewServeMux()
+	mux.Handle(
+		viper.GetString("metrics_uri_path"), 
+		ms.NewDashboardHandler(grpcObserver.Report, goMetObserver.Report),
+	)
+	
+	mServer := ms.NewMetricsServer(
 		fmt.Sprintf(
 			"%s:%d",
 			viper.GetString("metrics_server_host"),
 			viper.GetInt("metrics_server_port"),
-		),
+		),		
 		tlsMetricsConf,
-		grpcObserver.Report,
-		goMetObserver.Report,
 	)
-	if err != nil {
-		logger.Fatal().AnErr("start metrics server", err).Msg("")
+	mServer.Handler = mux
+	
+	if mServer.TLSConfig == nil {
+		go mServer.ListenAndServe()
+	} else {
+		go mServer.ListenAndServeTLS("", "")
 	}
 	
 	zkCancels = append(
