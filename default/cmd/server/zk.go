@@ -11,10 +11,13 @@ type zkCancelFunc func()
 
 func notifyZkOfMetricsIfNeeded(logger zerolog.Logger) []zkCancelFunc {
 	if !viper.GetBool("use_zk") {
-		return nil
+		return nil, nil
 	}
 
-	host, _ := checkAnnounceHost(viper.GetString("zk_announce_host"), logger)
+	host, err := checkAnnounceHost(viper.GetString("zk_announce_host"), logger)
+	if err != nil {
+		return nil, err
+	}
 
 	logger.Info().Str("service", "{{.ServiceName}}").Msg("announcing metrics endpoint to zookeeper")
 	cancel := gk.Announce(viper.GetStringSlice("zk_connection_string"), &gk.Registration{
@@ -25,15 +28,18 @@ func notifyZkOfMetricsIfNeeded(logger zerolog.Logger) []zkCancelFunc {
 	})
 	logger.Info().Str("service", "{{.ServiceName}}").Msg("Service successfully registered metrics endpoint to zookeeper")
 
-	return []zkCancelFunc{cancel}
+	return []zkCancelFunc{cancel}, nil
 }
 
-func notifyZkOfRPCServerIfNeeded(logger zerolog.Logger) []zkCancelFunc {
+func notifyZkOfRPCServerIfNeeded(logger zerolog.Logger) ([]zkCancelFunc, error) {
 	if !viper.GetBool("use_zk") {
-		return nil
+		return nil, nil
 	}
 
-	host, _ := checkAnnounceHost(viper.GetString("zk_announce_host"), logger)
+	host, err := checkAnnounceHost(viper.GetString("zk_announce_host"), logger)
+	if err != nil {
+		return nil, err
+	}
 
 	logger.Info().Str("service", "{{.ServiceName}}").Msg("announcing rpc endpoint to zookeeper")
 	cancel := gk.Announce(viper.GetStringSlice("zk_connection_string"), &gk.Registration{
@@ -44,15 +50,18 @@ func notifyZkOfRPCServerIfNeeded(logger zerolog.Logger) []zkCancelFunc {
 	})
 	logger.Info().Str("service", "{{.ServiceName}}").Msg("Service successfully registered rpc endpoint to zookeeper")
 
-	return []zkCancelFunc{cancel}
+	return []zkCancelFunc{cancel}, nil
 }
 
-func notifyZkOfGatewayEndpointIfNeeded(logger zerolog.Logger) []zkCancelFunc {
+func notifyZkOfGatewayEndpointIfNeeded(logger zerolog.Logger) ([]zkCancelFunc, error) {
 	if !(viper.GetBool("use_zk") && viper.GetBool("use_gateway_proxy")) {
-		return nil
+		return nil, nil
 	}
 
-	host, _ := checkAnnounceHost(viper.GetString("zk_announce_host"), logger)
+	host, err := checkAnnounceHost(viper.GetString("zk_announce_host"), logger)
+	if err != nil {
+		return nil, err
+	}
 
 	gatewayEndpoint := "http"
 	if viper.GetBool("use_tls") {
@@ -69,7 +78,7 @@ func notifyZkOfGatewayEndpointIfNeeded(logger zerolog.Logger) []zkCancelFunc {
 	})
 	logger.Info().Str("service", "{{.ServiceName}}").Msg("announcing gateway endpoint to zookeeper")
 
-	return []zkCancelFunc{cancel}
+	return []zkCancelFunc{cancel}, nil
 }
 
 func checkAnnounceHost(ah string, logger zerolog.Logger) (string, error) {
