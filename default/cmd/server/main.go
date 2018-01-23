@@ -143,9 +143,14 @@ func main() {
 		go mServer.ListenAndServeTLS("", "")
 	}
 	
+	cancels, err := notifyZkOfMetricsIfNeeded(logger)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("zk metrics announcement")
+	}
+
 	zkCancels = append(
 		zkCancels,
-		notifyZkOfMetricsIfNeeded(logger)...,
+		cancels...,
 	)
 
 	metricsChan := subject.New(ctx, observers...)
@@ -174,9 +179,14 @@ func main() {
 		Msg("starting grpc server")
 	go grpcServer.Serve(lis)
 
+	cancels, err = notifyZkOfRPCServerIfNeeded(logger)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("")
+	}
+
 	zkCancels = append(
 		zkCancels,
-		notifyZkOfRPCServerIfNeeded(logger)...,
+		cancels...,
 	)
 
 	if viper.GetBool("use_gateway_proxy") {
@@ -187,9 +197,14 @@ func main() {
 		}
 	}
 
+	cancels, err = notifyZkOfGatewayEndpointIfNeeded(logger)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("")
+	}
+
 	zkCancels = append(
 		zkCancels,
-		notifyZkOfGatewayEndpointIfNeeded(logger)...,
+		cancels...,
 	)
 
 	s := <- sigChan
