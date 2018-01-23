@@ -21,8 +21,8 @@ func notifyZkOfMetricsIfNeeded(logger zerolog.Logger) []zkCancelFunc {
 
 	logger.Info().Str("service", "{{.ServiceName}}").Msg("announcing metrics endpoint to zookeeper")
 	cancel := gk.Announce(viper.GetStringSlice("zk_connection_string"), &gk.Registration{
-		Path:   viper.GetString("zk_announce_path") + viper.GetString("metrics_uri_path"),
-		Host:   host,
+		Path:   viper.GetString("zk_announce_path") + viper.GetString("metrics_dashboard_uri_path"),
+		Host:   viper.GetString("zk_announce_host"),
 		Status: gk.Alive,
 		Port:   viper.GetInt("metrics_server_port"),
 	})
