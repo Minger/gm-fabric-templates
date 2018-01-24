@@ -158,9 +158,21 @@ func main() {
 	sink := gmfabricsink.New(metricsChan)
 	gometrics.NewGlobal(gometrics.DefaultConfig("{{.ServiceName}}"), sink)
 
-	
+	hostName, err := os.Hostname()
+	if err != nil {
+		logger.Error().Err(err).Msg("unable to determin host name: program continues")
+	}
+	statsTags := []string{
+		subject.JoinTag("service", "{{.ServiceName}}"),
+		subject.JoinTag("host", hostName),
+	}
 	opts := []grpc.ServerOption{
-		grpc.StatsHandler(grpcmetrics.NewStatsHandler(metricsChan)),
+		grpc.StatsHandler(
+			grpcmetrics.NewStatsHandlerWithTags(
+				metricsChan,
+				statsTags,
+			),
+		),
 	}
 
 	opts = append(opts, getTLSOptsIfNeeded(tlsServerConf)...)
