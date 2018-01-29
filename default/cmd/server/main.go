@@ -62,7 +62,7 @@ func main() {
 	}
 
 	logger.Debug().Str("service", "{{.ServiceName}}").Msg("creating server")
-	server, err := methods.New{{.GoServiceName}}Server()
+	server, err := methods.New{{.GoServiceName}}Server(logger)
 	if err != nil {
 		logger.Fatal().AnErr("New{{.GoServiceName}}Server())", err).Msg("")
 	}
