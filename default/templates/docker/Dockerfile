@@ -7,6 +7,6 @@ RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-EXPOSE {{.GrpcServerPort}}
-EXPOSE {{.MetricsServerPort}}
-EXPOSE {{.GatewayProxyPort}}
+EXPOSE 10000
+EXPOSE 10001
+EXPOSE 8080
