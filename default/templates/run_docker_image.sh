@@ -3,7 +3,7 @@
 set -euxo pipefail
 
 docker run --rm -t \
-    -p {{.GrpcServerPort}}:{{.GrpcServerPort}} \
-    -p {{.MetricsServerPort}}:{{.MetricsServerPort}} \
-    -p {{.GatewayProxyPort}}:{{.GatewayProxyPort}} \
+    -p 10000:10000 \
+    -p 10001:10001 \
+    -p 8080:8080 \
     {{.ServiceName}}
