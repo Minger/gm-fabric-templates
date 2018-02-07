@@ -121,7 +121,7 @@ func registerClient(
 		clientOpts = []grpc.DialOption{grpc.WithInsecure()}
 	}
 
-	err = pb.Register{{"{{.GoServiceName}}"}}HandlerFromEndpoint(
+	err = pb.Register{{"{{.ServerInterfaceName}}"}}HandlerFromEndpoint(
 		ctx,
 		mux,
 		fmt.Sprintf(
@@ -132,7 +132,7 @@ func registerClient(
 		clientOpts,
 	)
 	if err != nil {
-		return errors.Wrap(err, "pb.Register{{"{{.GoServiceName}}"}}HandlerFromEndpoint")
+		return errors.Wrap(err, "pb.Register{{"{{.ServerInterfaceName}}"}}HandlerFromEndpoint")
 	}
 
 	return nil

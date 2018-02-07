@@ -27,7 +27,6 @@ import (
 
 	"{{.ConfigPackage}}"
 	"{{.MethodsPackage}}"
-	pb "{{.PBImport}}"
 
 	// we don't use this directly, but need it in vendor for gateway grpc plugin
 	_ "github.com/golang/glog"
@@ -59,12 +58,6 @@ func main() {
 	logger.Debug().Str("service", "{{.ServiceName}}").Msg("initializing config")
 	if err = {{.ConfigPackageName}}.Initialize(); err != nil {
 		logger.Fatal().AnErr("{{.ConfigPackageName}}.Initialize()", err).Msg("")
-	}
-
-	logger.Debug().Str("service", "{{.ServiceName}}").Msg("creating server")
-	server, err := methods.New{{.GoServiceName}}Server(logger)
-	if err != nil {
-		logger.Fatal().AnErr("New{{.GoServiceName}}Server())", err).Msg("")
 	}
 
 	if tlsMetricsConf, err = buildMetricsTLSConfigIfNeeded(logger); err != nil {
@@ -184,8 +177,7 @@ func main() {
 	opts = append(opts, oauthOpts...)
 
 	grpcServer := grpc.NewServer(opts...)
-
-	pb.Register{{.GoServiceName}}Server(grpcServer, server)
+	methods.CreateAndRegisterServer(logger, grpcServer)
 
 	logger.Debug().Str("service", "{{.ServiceName}}").
 		Msg("starting grpc server")

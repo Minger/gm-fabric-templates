@@ -3,7 +3,8 @@ package {{"{{.MethodsPackageName}}"}}
 import (
     "github.com/pkg/errors"
 
-	pb "{{"{{.PBImport}}"}}"
+	{{"{{.ProtobufImport}}"}}
+	{{"{{.PBImport}}"}}
 )
 
 {{"{{.Comments}}"}}
