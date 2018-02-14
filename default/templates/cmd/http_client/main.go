@@ -16,15 +16,15 @@ import (
 )
 
 func main() {
-    os.Exit(run())
+	os.Exit(run())
 }
 
 func run() int {
 	var testCertDir string
 	var uri string
-    var err error
+	var err error
 
-    logger := zerolog.New(os.Stderr).With().Timestamp().Logger().
+	logger := zerolog.New(os.Stderr).With().Timestamp().Logger().
 		Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
 	pflag.StringVar(
@@ -40,19 +40,19 @@ func run() int {
 		"(if TLS) directory holding test certificates",
 	)
 	pflag.Parse()
-    if uri == "" {
-        logger.Error().Msg("You must supply a URI. (--uri)")
-        return 1
+	if uri == "" {
+		logger.Error().Msg("You must supply a URI. (--uri)")
+		return 1
 	}
 
-    logger.Info().Str("http-client", "{{.ServiceName}}").
-    Str("URI", uri).
-    Str("test-certs", testCertDir).Msg("starting")
+	logger.Info().Str("http-client", "{{.ServiceName}}").
+		Str("URI", uri).
+		Str("test-certs", testCertDir).Msg("starting")
 
 	client, err := newClient(testCertDir)
 	if err != nil {
-        logger.Error().AnErr("newClient", err).Msg("")
-        return 1
+		logger.Error().AnErr("newClient", err).Msg("")
+		return 1
 	}
 
 	if err = runURITest(client, uri); err != nil {
@@ -60,8 +60,8 @@ func run() int {
 		return 1
 	}
 
-    logger.Info().Str("http client", "{{.ServiceName}}").Msg("terminating normally")
-    return 0
+	logger.Info().Str("http client", "{{.ServiceName}}").Msg("terminating normally")
+	return 0
 }
 
 func newClient(testCertDir string) (*http.Client, error) {
@@ -72,10 +72,10 @@ func newClient(testCertDir string) (*http.Client, error) {
 		var tlsConf *tls.Config
 
 		tlsConf, err = tlsutil.NewTLSClientConfig(
-			filepath.Join(testCertDir, "root.crt"),                      // ca_cert_path
-			filepath.Join(testCertDir, "server.localdomain.chain.crt"),  // server_cert_path
-			filepath.Join(testCertDir, "server.localdomain.nopass.key"), // server_key_path
-			"server.localdomain",                                        // server_cert_name
+			filepath.Join(testCertDir, "intermediate.crt"),
+			filepath.Join(testCertDir, "localhost.crt"),
+			filepath.Join(testCertDir, "localhost.key"),
+			"localhost",
 		)
 		if err != nil {
 			return nil, errors.Wrap(err, "tlsutil.NewTLSClientConfig")
@@ -118,4 +118,3 @@ func runURITest(client *http.Client, uri string) error {
 
 	return nil
 }
-

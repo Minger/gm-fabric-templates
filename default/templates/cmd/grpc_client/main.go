@@ -81,10 +81,10 @@ func newClient(
 		var tlsConf *tls.Config
 
 		tlsConf, err := tlsutil.NewTLSClientConfig(
-			filepath.Join(testCertDir, "root.crt"),                      // ca_cert_path
-			filepath.Join(testCertDir, "server.localdomain.chain.crt"),  // server_cert_path
-			filepath.Join(testCertDir, "server.localdomain.nopass.key"), // server_key_path
-			"server.localdomain",                                        // server_cert_name
+			filepath.Join(testCertDir, "intermediate.crt"), 
+			filepath.Join(testCertDir, "localhost.crt"),
+			filepath.Join(testCertDir, "localhost.key"), 
+			"localhost",
 		)
 		if err != nil {
 			return nil, errors.Wrap(err, "tlsutil.NewTLSClientConfig")
