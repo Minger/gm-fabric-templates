@@ -1,0 +1,3 @@
+
+# the oldest version of the fabric generator that works with these templates
+min_fabric_version = "0.1.4-dev"
