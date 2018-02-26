@@ -24,9 +24,9 @@
   branch = "master"
   name = "github.com/armon/go-metrics"
 
-[[constraint]]
-  branch = "master"
-  name = "github.com/deciphernow/gm-fabric-go"
+#[[constraint]]
+#  name = "github.com/deciphernow/gm-fabric-go"
+#  version = "0.1.1"
 
 [[constraint]]
   branch = "master"
