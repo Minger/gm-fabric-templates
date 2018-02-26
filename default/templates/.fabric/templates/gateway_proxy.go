@@ -18,6 +18,7 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 
+	"github.com/deciphernow/gm-fabric-go/httputil"
 	"github.com/deciphernow/gm-fabric-go/metrics/httpmeta"
 	"github.com/deciphernow/gm-fabric-go/metrics/proxymeta"
 	"github.com/deciphernow/gm-fabric-go/middleware"
@@ -93,8 +94,8 @@ func startGatewayProxy(ctx context.Context, logger zerolog.Logger) error {
 	// compose the grpc array handler
 	if viper.GetBool("gatweway_serve_anonymous_arrays") {
 		logger.Debug()Str("service", "{{"{{.ServiceName}}"}}").
-		Msg("serving anonymous arrays")
-		handler := httputil.Handler(logger, handler)
+			Msg("serving anonymous arrays")
+		handler = httputil.Handler(logger, handler)
 	}
 
 	go http.Serve(listener, handler)
