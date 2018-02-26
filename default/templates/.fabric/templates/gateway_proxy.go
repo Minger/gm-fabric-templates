@@ -92,7 +92,7 @@ func startGatewayProxy(ctx context.Context, logger zerolog.Logger) error {
 	handler = httpmeta.Handler(handler)
 
 	// compose the grpc array handler
-	if viper.GetBool("gatweway_serve_anonymous_arrays") {
+	if viper.GetBool("gateway_serve_anonymous_arrays") {
 		logger.Debug().Str("service", "{{"{{.ServiceName}}"}}").
 			Msg("serving anonymous arrays")
 		handler = httputil.Handler(logger, handler)
