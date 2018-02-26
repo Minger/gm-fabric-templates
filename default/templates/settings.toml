@@ -16,6 +16,7 @@
     use_gateway_proxy = true
     gateway_proxy_host = ""
     gateway_proxy_port = 8080
+    gatweway_serve_anonymous_arrays = true
 
 # tls
     ca_cert_path = ""
