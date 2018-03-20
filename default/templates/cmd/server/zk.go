@@ -70,7 +70,7 @@ func notifyZkOfGatewayEndpointIfNeeded(logger zerolog.Logger) ([]zkCancelFunc, e
 	}
 
 	gatewayEndpoint := "http"
-	if viper.GetBool("use_tls") {
+	if viper.GetBool("gateway_use_tls") {
 		gatewayEndpoint = "https"
 	}
 
